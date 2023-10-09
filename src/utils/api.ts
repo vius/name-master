@@ -10,16 +10,13 @@ export const apiMap: any = {
 }
 
 const protocol = 'https'
-// const host = 'www.yongqitang.cn'
-const host = 'yapi.zuoyebang.cc/mock/9171'
+const host = 'www.yongqitang.cn'
+// const host = 'localhost:5173'
 export const getFullUrl = (key: string) => {
   const path = apiMap[key]
   if (!path) {
     console.error('未找到相应的请求地址！')
     return
-  }
-  if (env.DEV) {
-    return `http://localhost:5173/${path}`
   }
   const url = `${protocol}://${host}/${path}`
   return url

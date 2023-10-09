@@ -22,6 +22,7 @@ const login = async () => {
       uni.setStorageSync('user', user)
       uni.setStorageSync('token', token)
       logined = true
+      console.log('after login', token)
       uni.$emit('afterLogin', user)
     }
   })

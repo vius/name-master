@@ -60,25 +60,10 @@ const { state, canSendMessage, isLoading, scrollTobBottom, updateRequestNum } = 
 // 分享逻辑
 onShareAppMessage(getShareMessage)
 onShareTimeline(getShareMessage)
-onShow(() => {
-  console.log('show')
-  updateRequestNum()
-})
 
 const inputDisable = computed(() => {
   return isLoading.value || process.step.value < 3
 })
-
-// 登录相关逻辑
-const afterLogin = () => {
-  console.log('afterlogin')
-}
-if (logined) {
-  afterLogin()
-} else {
-  uni.$on('afterLogin', afterLogin)
-}
-
 // 获取基础步骤
 const getBaseInfo = async () => {
   const data = await request({
@@ -86,7 +71,19 @@ const getBaseInfo = async () => {
   })
   process.initQuestions(data)
 }
-getBaseInfo()
+// 登录相关逻辑
+const afterLogin = () => {
+  updateRequestNum()
+  getBaseInfo()
+  onShow(() => {
+    updateRequestNum()
+  })
+}
+if (logined) {
+  afterLogin()
+} else {
+  uni.$on('afterLogin', afterLogin)
+}
 
 // 处理步骤相关
 const process = new Process(state)
