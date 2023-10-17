@@ -32,7 +32,10 @@
             </section>
             <section v-if="item.last && !item.loading" class="question-choose-like-text">
               <p class="button-container">
-                <button type="primary" size="mini" plain @click="submitAgain">重新生成</button>
+                <button type="primary" size="mini" plain @click="submitAgain" :disabled="index !== state.chatList.length - 1">重新生成</button>
+                <picker @change="(data: any) => { bindPickerChange(data, item.content) }" :value="index" :range="getNameList(item.content)">
+                  <button type="primary" size="mini" plain>复制</button>
+                </picker>
               </p>
             </section>
           </section>
@@ -174,6 +177,29 @@ const newChat = () => {
   }
   process.init()
 }
+const getNameList = (content: string) => {
+  // 匹配 `*** ***` 包裹的内容的正则表达式
+  let regex = /\*\*(.*?)\*\*/g;
+
+  // 使用正则表达式进行匹配
+  let matches = [];
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    matches.push(match[1]);
+  }
+  return matches
+}
+const bindPickerChange = (data: any, content: string) => {
+  const nameList = getNameList(content)
+  const index = data.detail.value * 1
+  const name = nameList[index]
+  uni.setClipboardData({
+    data: name,
+    success() {
+      console.log('name', name)
+    }
+  })
+}
 </script>
 
 <style lang="less">
@@ -236,7 +262,7 @@ uni-page-wrapper>uni-page-body {
           display: inline-block;
           background-color: white;
           border-radius: 4px;
-          padding: 6px 8px;
+          padding: 6px 3px;
           margin-right: 12px;
           margin-top: 8px;
           min-width: 48px;
@@ -246,6 +272,8 @@ uni-page-wrapper>uni-page-body {
         }
 
         .question-choose-like-text {
+          margin-top: 8px;
+
           .text-container {
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 8px;
@@ -258,9 +286,19 @@ uni-page-wrapper>uni-page-body {
             text-align: right;
             height: 32px;
 
+            picker {
+              display: inline-block;
+            }
+
             button {
               margin-left: 5px;
               padding: 0 12px;
+              border: 1px solid #5736FF;
+              color: #5736FF;
+
+              &[disabled] {
+                opacity: 0.3;
+              }
             }
           }
         }

@@ -67,11 +67,9 @@ export class Process {
     const step = this.step.value
     const data = this.questions[step - 1]
     const row = this.add(data)
-    setTimeout(() => {
-      this.textToStream(row, data.question, {
-        after
-      })
-    }, 50);
+    this.textToStream(row, data.question, {
+      after
+    })
   }
 
   isLast() {
