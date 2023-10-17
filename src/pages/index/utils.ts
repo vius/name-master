@@ -4,8 +4,9 @@ import { reactive, computed, nextTick } from "vue";
 import MarkdownIt from 'markdown-it/dist/markdown-it.min.js'
 const md = new MarkdownIt();
 export const getMarkdownText = (content: string) => {
-  let htmlStr = content
+  let htmlStr = content || ''
   try {
+    // console.log('content', content)
     htmlStr = md.render(content)
   } catch (e) {
     console.error(e)

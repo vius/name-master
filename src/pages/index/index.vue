@@ -1,5 +1,15 @@
 <template>
   <section class="page-container">
+    <section class="invite">
+      <view class="left">
+        <view>
+          <text>免费问答次数</text>
+          <text class="tips">{{ state.tokenNum }}</text>
+        </view>
+        <view class="tips">邀请好友免费问答次数 +5</view>
+      </view>
+      <button open-type="share">邀请好友</button>
+    </section>
     <scroll-view scroll-y class="content" enable-back-to-top :scroll-top="state.scrollTop" scroll-with-animation>
       <section class="scroll-y-container">
         <section v-for="item, index in state.chatList" :title="item.name" :key="item.id" class="message-row" :id="'message-' + index"
@@ -10,13 +20,13 @@
           <section v-if="state.chatList[index - 1] && item.first" class="divider">
             <div class="divider-text">新一轮对话</div>
           </section>
-
+          <!-- <button type="primary" size="mini" plain @click="inputText">录入文案</button> -->
           <section class="row-main">
             <mp-html class="text-content" :content="getMarkdownText(item.content)"></mp-html>
             <uni-list v-if="item.groupId === 1 && item.list?.length && !item.loading" class="choose-list" :border="false">
               <uni-list-item v-for="option in item.list" :key="option" :showArrow="process.step.value === item.groupId" :title="option" @click="answer(item, option)" :clickable="index === state.chatList.length - 1" />
             </uni-list>
-            <section v-if="item.groupId === 2 && !item.loading && item.list?.length">
+            <section v-if="item.groupId === 2 && !item.loading && item.list?.length" class="tag-container">
               <button class="tag" v-for="option in item.list" :key="option" @click="answer(item, option)" :disabled="index !== state.chatList.length - 1">{{ option }}</button>
             </section>
             <section v-if="item.groupId === 3 && !item.loading" class="question-choose-like-text">
@@ -24,10 +34,11 @@
                 <mp-html class="text-content" :content="getMarkdownText(textArray[currentTextIndex])"></mp-html>
               </p>
               <p class="button-container">
-                <button type="primary" size="mini" plain @click="likeText" :disabled="index !== state.chatList.length - 1">喜欢</button>
+                <button type="primary" size="mini" plain @click="likeText()" :disabled="index !== state.chatList.length - 1">选择</button>
                 <button type="primary" size="mini" plain v-if="currentTextIndex !== 0" @click="changeCrrentTextIndex(-1)" :disabled="index !== state.chatList.length - 1">上一个</button>
                 <button type="primary" size="mini" plain v-if="currentTextIndex < textArray.length - 1" @click="changeCrrentTextIndex(1)" :disabled="index !== state.chatList.length - 1">下一个</button>
-                <button type="primary" size="mini" plain @click="changeBatchText()" :disabled="index !== state.chatList.length - 1">换一批</button>
+                <button type="primary" size="mini" plain @click="inputText" :disabled="index !== state.chatList.length - 1">录入文案</button>
+                <!-- <button type="primary" size="mini" plain @click="changeBatchText()" :disabled="index !== state.chatList.length - 1">换一批</button> -->
               </p>
             </section>
             <section v-if="item.last && !item.loading" class="question-choose-like-text">
@@ -47,6 +58,21 @@
       <uni-easyinput :suffixIcon="canSendMessage ? 'paperplane-filled' : 'paperplane'" v-model="state.message" @iconClick="sendMessage" @confirm="sendMessage" :disabled="inputDisable"></uni-easyinput>
     </section>
   </section>
+  <!-- <uni-popup ref="inputDialog" type="dialog">
+    <textarea placeholder-style="color:#F76260" placeholder="占位符字体是红色的" />
+  </uni-popup> -->
+  <uni-popup ref="inputDialog" :mask-click="false" class="textarea-popup">
+    <section class="header">
+      <p class="title">录入文案</p>
+    </section>
+    <section class="main">
+      <uni-easyinput type="textarea" autoHeight v-model="text" placeholder="请输入"></uni-easyinput>
+    </section>
+    <section class="footer">
+      <button @click="close">取消</button>
+      <button type="primary" @click="confirm">确认</button>
+    </section>
+  </uni-popup>
 </template>
 
 <script setup lang="ts">
@@ -78,10 +104,12 @@ const getBaseInfo = async () => {
 const afterLogin = () => {
   updateRequestNum()
   getBaseInfo()
-  onShow(() => {
-    updateRequestNum()
-  })
 }
+onShow(() => {
+  if (logined) {
+    updateRequestNum()
+  }
+})
 if (logined) {
   afterLogin()
 } else {
@@ -158,8 +186,10 @@ const addUserMessage = (msg: string) => {
     content: msg
   })
 }
-const likeText = () => {
-  const text = textArray.value[currentTextIndex.value]
+const likeText = (text: string = '') => {
+  if (!text) {
+    text = textArray.value[currentTextIndex.value]
+  }
   const data = {
     groupId: 3,
     value: text
@@ -200,6 +230,21 @@ const bindPickerChange = (data: any, content: string) => {
     }
   })
 }
+const inputDialog = ref()
+const text = ref('')
+const inputText = () => {
+  inputDialog.value.open()
+}
+const confirm = (data: any) => {
+  if (!text.value) {
+    return
+  }
+  likeText(text.value)
+  close()
+}
+const close = () => {
+  inputDialog.value.close()
+}
 </script>
 
 <style lang="less">
@@ -221,6 +266,48 @@ uni-page-wrapper>uni-page-body {
   // background-color: #f6f6f6;
   background-color: white;
 
+  .invite {
+    height: 54px;
+    min-height: 54px;
+    background: url('@/static/juxing.png') no-repeat;
+    background-size: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 12px;
+    box-sizing: border-box;
+
+    .left {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 12px;
+      color: rgba(0, 0, 0, 0.6);
+
+      text {
+        margin-right: 4px;
+      }
+
+      .tips {
+        color: #15BC38;
+        margin-top: 5px;
+      }
+    }
+
+    button {
+      margin: 0;
+      height: 30px;
+      line-height: 30px;
+      color: white;
+      background: url('@/static/button-bg.png') no-repeat;
+      width: 84px;
+      background-size: 100%;
+      font-size: 13px;
+
+      &::after {
+        border: none !important;
+      }
+    }
+  }
 
   .content {
     flex: 1;
@@ -258,17 +345,21 @@ uni-page-wrapper>uni-page-body {
           font-weight: 400;
         }
 
-        .tag {
-          display: inline-block;
-          background-color: white;
-          border-radius: 4px;
-          padding: 6px 3px;
-          margin-right: 12px;
+        .tag-container {
           margin-top: 8px;
-          min-width: 48px;
-          text-align: center;
-          font-size: 13px;
-          line-height: 2;
+
+          .tag {
+            display: inline-block;
+            background-color: white;
+            border-radius: 4px;
+            padding: 2px 5px;
+            margin-right: 8px;
+            margin-top: 2px;
+            min-width: 48px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 2;
+          }
         }
 
         .question-choose-like-text {
