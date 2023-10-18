@@ -34,10 +34,10 @@
                 <mp-html class="text-content" :content="getMarkdownText(textArray[currentTextIndex])"></mp-html>
               </p>
               <p class="button-container">
-                <button type="primary" size="mini" plain @click="likeText()" :disabled="index !== state.chatList.length - 1">选择</button>
+                <button type="primary" size="mini" plain @click="likeText()" :disabled="index !== state.chatList.length - 1">确认</button>
                 <button type="primary" size="mini" plain v-if="currentTextIndex !== 0" @click="changeCrrentTextIndex(-1)" :disabled="index !== state.chatList.length - 1">上一个</button>
                 <button type="primary" size="mini" plain v-if="currentTextIndex < textArray.length - 1" @click="changeCrrentTextIndex(1)" :disabled="index !== state.chatList.length - 1">下一个</button>
-                <button type="primary" size="mini" plain @click="inputText" :disabled="index !== state.chatList.length - 1">录入文案</button>
+                <button type="primary" size="mini" plain @click="inputText" :disabled="index !== state.chatList.length - 1">手动写入</button>
                 <!-- <button type="primary" size="mini" plain @click="changeBatchText()" :disabled="index !== state.chatList.length - 1">换一批</button> -->
               </p>
             </section>
@@ -63,7 +63,7 @@
   </uni-popup> -->
   <uni-popup ref="inputDialog" :mask-click="false" class="textarea-popup">
     <section class="header">
-      <p class="title">录入文案</p>
+      <p class="title">自定义文案</p>
     </section>
     <section class="main">
       <uni-easyinput type="textarea" autoHeight v-model="text" placeholder="请输入"></uni-easyinput>
