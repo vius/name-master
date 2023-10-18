@@ -115,6 +115,7 @@ export class Process {
           item.loading = false
           item.error = false
           this.step.value++
+          this.state.tokenNum--
         }
       })
   }

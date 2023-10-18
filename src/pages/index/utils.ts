@@ -29,7 +29,7 @@ export const getContentById = async (data: any) => {
 export const useChat = () => {
   const state: any = reactive({
     chatList: [],
-    tokenNum: 100,
+    tokenNum: '',
     message: '',
     scrollTop: 0,
     timeCycleMap: [],
