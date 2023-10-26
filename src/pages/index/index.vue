@@ -107,6 +107,10 @@ const afterLogin = () => {
 }
 onShow(() => {
   if (logined) {
+    uni.showToast({
+      icon: 'success',
+      title: '获取聊天次数',
+    })
     updateRequestNum()
   }
 })
@@ -205,7 +209,8 @@ const newChat = () => {
   if (isLoading.value) {
     return
   }
-  process.init()
+  process.refresh()
+  currentTextIndex.value = 0
 }
 const getNameList = (content: string) => {
   // 匹配 `*** ***` 包裹的内容的正则表达式

@@ -58,6 +58,12 @@ export class Process {
     })
   }
 
+  refresh(){
+    this.step.value = 0;
+    this.commitdata = []
+    this.next()
+  }
+
   next(after: Function = noop) {
     if (this.isLast()) {
       this.submit()
