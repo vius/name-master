@@ -7,11 +7,13 @@ export const apiMap: any = {
   login: 'qm/api/login',
   share: 'qm/api/share',
   getUserInfo: 'qm/api/info',
+  getShangxiList: 'qm/api/shangxilist'
 }
 
-const protocol = 'https'
-const host = 'www.yongqitang.cn'
-// const host = 'localhost:5173'
+// const protocol = 'https'
+// const host = 'www.yongqitang.cn'
+const protocol = 'http'
+const host = '10.250.17.13:8082/'
 export const getFullUrl = (key: string) => {
   const path = apiMap[key]
   if (!path) {

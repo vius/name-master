@@ -46,10 +46,14 @@ export const useChat = () => {
     nextTick(() => {
       const query = uni.createSelectorQuery()
       const node = query.select('.scroll-y-container')
-      node.boundingClientRect((data: any) => {
-        const height = data.height
-        state.scrollTop = height + 24
-      }).exec();
+      if (node) {
+        node.boundingClientRect((data: any) => {
+          console.log('height', data)
+          console.log('state.scrollTop', state.scrollTop)
+          // const height = data.height
+          // state.scrollTop = height + 24
+        }).exec();
+      }
     })
   }
   const updateRequestNum = async () => {

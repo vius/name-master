@@ -13,7 +13,8 @@ export default defineConfig({
       {
         // target: 'https://yapi.zuoyebang.cc/mock/9171',
         // target: 'http://10.250.24.95:8082',
-        target: 'http://10.250.25.159:8082',
+        // target: 'http://10.250.25.159:8082',
+        target: 'http://10.250.34.76:8082',
         // target: "http://10.250.34.74:8082",
         changeOrigin: true
       }

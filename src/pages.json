@@ -3,16 +3,22 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "网名匠"
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/chat",
+			"style": {
+				"navigationStyle": "custom"
 			}
 		}
 	],
 	"easycom": {
-    "autoscan": true,
-    "custom": {
-      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
-    }
-  },
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+		}
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
