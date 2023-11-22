@@ -3,13 +3,21 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"disableScroll": true
 			}
 		},
 		{
 			"path": "pages/index/chat",
 			"style": {
 				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/index/shangxi-chat",
+			"style": {
+				"disableScroll": false,
+				"navigationBarTitleText": "赏析详情"
 			}
 		}
 	],

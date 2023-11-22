@@ -69,9 +69,3 @@ function arrayBufferToString(arr: any) {
   return str;
 }
 
-// #e5f3fe - #5781fb 
-// #fbf1ef - #ff8671
-// #dbf4f0 - #37c6b0
-// #e3e5fe - #9f88fd
-// #fff5ec - #ffab6b
-

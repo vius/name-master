@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { reactive, computed, nextTick } from "vue";
+import { reactive, computed, nextTick, getCurrentInstance } from "vue";
 // @ts-ignore
 import MarkdownIt from 'markdown-it/dist/markdown-it.min.js'
 const md = new MarkdownIt();
@@ -43,18 +43,23 @@ export const useChat = () => {
     return state.message && !isLoading.value
   })
   const scrollTobBottom = () => {
-    nextTick(() => {
-      const query = uni.createSelectorQuery()
-      const node = query.select('.scroll-y-container')
-      if (node) {
-        node.boundingClientRect((data: any) => {
-          console.log('height', data)
-          console.log('state.scrollTop', state.scrollTop)
-          // const height = data.height
-          // state.scrollTop = height + 24
-        }).exec();
-      }
-    })
+    setTimeout(() => {
+      nextTick(() => {
+        const query = uni.createSelectorQuery()
+        const node = query.select('.scroll-y-container')
+        if (node) {
+          node.node((node) => {
+            console.log('node', node)
+          }).exec()
+          node.boundingClientRect((data: any) => {
+            // console.log('data', data)
+            // console.log('state.scrollTop', state.scrollTop)
+            // const height = data.height
+            // state.scrollTop = height + 24
+          }).exec();
+        }
+      })
+    }, 10);
   }
   const updateRequestNum = async () => {
     const { tokenNum = 0 } = await request({

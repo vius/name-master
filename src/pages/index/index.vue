@@ -12,8 +12,8 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import Chat from './chat.vue'
-import ShangXi from './shangxi.vue'
+import Chat from '@/components/chat/chat.vue'
+import ShangXi from '@/components/shangxi/shangxi.vue'
 const tabs = [{
   label: '对话',
   value: 1

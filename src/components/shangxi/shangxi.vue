@@ -6,7 +6,7 @@
       </section>
     </uni-card>
     <section class="list-container">
-      <section class="list-item" v-for="item, index in state.list" :key="item.id" :class="['item-' + (index % 5 + 1)]">
+      <section class="list-item" v-for="item, index in state.list" :key="item.id" :class="['item-' + (index % 5 + 1)]" @click="jump2detail(item)">
         <view class="badge">
           <text class="square">{{ item.chuchu.charAt(0) }}</text>
           <text class="triangle"></text>
@@ -29,10 +29,10 @@ import request from '@/utils/request'
 import { reactive } from 'vue'
 import { logined } from '@/utils/init'
 import MpHtml from 'mp-html/dist/uni-app/components/mp-html/mp-html.vue'
-import { getMarkdownText } from './utils'
+import { getMarkdownText } from '@/pages/index/utils'
 
 const state: any = reactive({
-  label: '孤独',
+  label: '全部',
   labels: [],
   list: []
 })
@@ -44,20 +44,31 @@ const getList = async (label: string = '') => {
   const data = await request({
     url: 'getShangxiList',
     data: {
-      label
+      label: label === '全部' ? '' : label
     }
   })
   state.list = data.content || []
-  state.labels = data.label || []
+  state.labels = ['全部', ...(data.label || [])]
+}
+const jump2detail = (item: any) => {
+  console.log('jump2detail')
+  const data = JSON.stringify(item)
+  const url = `/pages/index/shangxi-chat?data=${data}`
+  uni.navigateTo({
+    url
+  })
 }
 const getNameList = (nameString: string) => {
   const list = nameString.split('#')
   return list.splice(0, 2).filter(name => name)
 }
-if (logined) {
+const afterLogin = () => {
   getList()
+}
+if (logined) {
+  afterLogin()
 } else {
-  uni.$on('afterLogin', getList)
+  uni.$on('afterLogin', afterLogin)
 }
 </script>
 <style lang="less" scoped>

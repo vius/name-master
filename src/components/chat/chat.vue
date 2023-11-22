@@ -10,7 +10,7 @@
       </view>
       <button open-type="share">邀请好友</button>
     </section>
-    <scroll-view scroll-y class="content" enable-back-to-top :scroll-top="state.scrollTop" scroll-with-animation>
+    <scroll-view scroll-y class="content" enable-back-to-top :scroll-top="state.scrollTop" scroll-with-animation :enable-flex="true">
       <section class="scroll-y-container">
         <section v-for="item, index in state.chatList" :title="item.name" :key="item.id" class="message-row" :id="'message-' + index"
           :class="{ 'assistant-row': item.role === 'assistant', 'user-row': item.role === 'user', 'loading': !!item.loading && !item.content, 'error': !!item.error }">
@@ -67,8 +67,8 @@
 <script setup lang="ts">
 import request from '@/utils/request'
 import { ref, watch, computed, reactive } from 'vue'
-import { useChat, getMarkdownText } from './utils'
-import { Process } from './step'
+import { useChat, getMarkdownText } from '@/pages/index/utils'
+import { Process } from '@/pages/index/step'
 import MpHtml from 'mp-html/dist/uni-app/components/mp-html/mp-html.vue'
 import { logined } from '@/utils/init'
 import useShare from '@/hook/useShare'
@@ -283,7 +283,6 @@ uni-page-wrapper>uni-page-body {
     flex-direction: column;
     overflow: auto;
     width: 100%;
-    display: flex;
 
     .scroll-y-container {
       padding: 6px 0 0 0;
