@@ -14,10 +14,10 @@
         <view class="chuchu">
           {{ item.chuchu }}
         </view>
-        <view class="text-content">
+        <view class="text-content" v-if="item.wenan">
           <mp-html :content="getMarkdownText(item.wenan)"></mp-html>
         </view>
-        <view class="name-list">
+        <view class="name-list" v-if="item.tuijian">
           <text v-for="name in getNameList(item.tuijian)" :key="name">#{{ name }}</text>
         </view>
       </section>

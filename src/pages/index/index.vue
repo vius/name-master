@@ -4,8 +4,8 @@
       <text v-for="item in tabs" :key="item.value" @click="tabChange(item.value)" :class="{ active: item.value === tab }">{{ item.label }}</text>
     </section>
     <uni-transition mode-class="slide-right" ref="animationRef" :styles="styles" :duration="0" :show="true">
-      <Chat class="tab-container"></Chat>
       <ShangXi class="tab-container"></ShangXi>
+      <Chat class="tab-container"></Chat>
     </uni-transition>
   </section>
 </template>
@@ -15,10 +15,10 @@ import { ref, reactive } from 'vue'
 import Chat from '@/components/chat/chat.vue'
 import ShangXi from '@/components/shangxi/shangxi.vue'
 const tabs = [{
-  label: '对话',
+  label: '赏析',
   value: 1
 }, {
-  label: '赏析',
+  label: '对话',
   value: 2
 }]
 const styles = {

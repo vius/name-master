@@ -14,7 +14,8 @@ export class Process {
   initQuestions(data: any) {
     const { kaichangbai, list } = data
     this.kaichangbai = kaichangbai
-    this.questions = list
+    this.questions = list.filter((item: any) => item.groupId === 3)
+    console.log('list', this.questions)
     this.init()
   }
   add(data: any = {}) {
@@ -58,10 +59,10 @@ export class Process {
     })
   }
 
-  refresh(){
+  refresh() {
     this.step.value = 0;
     this.commitdata = []
-    this.next()
+    this.init()
   }
 
   next(after: Function = noop) {

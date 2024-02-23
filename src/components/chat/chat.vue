@@ -23,6 +23,7 @@
           <section class="row-main">
             <mp-html class="text-content" :content="getMarkdownText(item.content)"></mp-html>
             <section v-if="item.groupId === 3 && !item.loading" class="question-choose-like-text">
+              <p>从下面选择您喜欢的文案</p>
               <p class="text-container">
                 <mp-html class="text-content" :content="getMarkdownText(item.list[currentTextIndex])"></mp-html>
               </p>
@@ -66,7 +67,7 @@
 
 <script setup lang="ts">
 import request from '@/utils/request'
-import { ref, watch, computed, reactive } from 'vue'
+import { ref, watch, computed, getCurrentInstance } from 'vue'
 import { useChat, getMarkdownText } from '@/pages/index/utils'
 import { Process } from '@/pages/index/step'
 import MpHtml from 'mp-html/dist/uni-app/components/mp-html/mp-html.vue'
@@ -79,7 +80,7 @@ const { state, canSendMessage, isLoading, scrollTobBottom, updateRequestNum } = 
 onShareAppMessage(getShareMessage)
 onShareTimeline(getShareMessage)
 const inputDisable = computed(() => {
-  return isLoading.value || process.step.value < 3
+  return isLoading.value || process.step.value < 2
 })
 // 获取基础步骤
 const getBaseInfo = async () => {
@@ -95,10 +96,6 @@ const afterLogin = () => {
 }
 onShow(() => {
   if (logined) {
-    uni.showToast({
-      icon: 'success',
-      title: '获取聊天次数',
-    })
     updateRequestNum()
   }
 })
@@ -114,10 +111,10 @@ const currentTextIndex = ref(0)
 const changeCrrentTextIndex = (lift: number) => {
   currentTextIndex.value = currentTextIndex.value + lift
 }
-
+const instance = getCurrentInstance();
 // 滚动相关
-watch(() => [state.chatList, currentTextIndex.value], () => {
-  scrollTobBottom()
+watch(() => [state.chatList,currentTextIndex.value], () => {
+  scrollTobBottom(instance)
 }, {
   deep: true
 })
@@ -140,15 +137,6 @@ const sendMessage = async () => {
     process.submit(state.message)
   }
   state.message = ''
-}
-const answer = (item: any, option: string) => {
-  const data = {
-    groupId: item.groupId,
-    value: option,
-  }
-  process.commitdata.push(data)
-  addUserMessage(option)
-  process.next()
 }
 const addUserMessage = (msg: string) => {
   state.chatList.push({

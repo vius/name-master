@@ -15,8 +15,8 @@
         <section v-for="item, index in state.chatList" :title="item.name" :key="item.id" class="message-row" :id="'message-' + index"
           :class="{ 'assistant-row': item.role === 'assistant', 'user-row': item.role === 'user', 'loading': !!item.loading && !item.content, 'error': !!item.error }">
           <section class="row-main">
-            <mp-html class="text-content" v-if="!item.list.length" :content="getMarkdownText(item.content)"></mp-html>
-            <template v-if="item.list.length">
+            <mp-html class="text-content" :content="getMarkdownText(item.content)"></mp-html>
+            <template v-if="item.list && item.list.length">
               <view class="list-item" v-for="name in item.list" :key="item">
                 <text>{{ name }}</text>
                 <img :src="Copy" @click="copyName(name)" />
@@ -27,49 +27,38 @@
       </section>
     </scroll-view>
     <section class="footer">
-      <!-- <uni-icons type="refresh" size="30" @click="newChat"></uni-icons> -->
-      <!-- <uni-easyinput :suffixIcon="canSendMessage ? 'paperplane-filled' : 'paperplane'" v-model="state.message" @iconClick="sendMessage" @confirm="sendMessage" :disabled="inputDisable"></uni-easyinput> -->
+      <button type="primary" @click="createNickName">创作专属网名</button>
     </section>
   </section>
-  <uni-popup ref="inputDialog" :mask-click="false" class="textarea-popup">
-    <section class="header">
-      <p class="title">自定义文案</p>
-    </section>
-    <section class="main">
-      <uni-easyinput type="textarea" autoHeight v-model="text" placeholder="请输入"></uni-easyinput>
-    </section>
-    <section class="footer">
-      <button @click="close">取消</button>
-      <button type="primary" @click="confirm">确认</button>
-    </section>
-  </uni-popup>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { reactive, watch, getCurrentInstance } from 'vue'
 import { useChat, getMarkdownText } from '@/pages/index/utils'
 import { Process } from '@/pages/index/step'
 import MpHtml from 'mp-html/dist/uni-app/components/mp-html/mp-html.vue'
 import { logined } from '@/utils/init'
 import useShare from '@/hook/useShare'
 import Copy from '@/static/copy.png'
+import { chat } from '@/utils/chat'
 
 import { onShareAppMessage, onShareTimeline, onLoad } from "@dcloudio/uni-app";
 const { getShareMessage } = useShare()
 const { state, scrollTobBottom, updateRequestNum } = useChat()
+const detail: any = {}
 // 获取url上参数
 onLoad((option = {}) => {
   const { data = '' } = option
   if (data) {
-    const detail = JSON.parse(data)
-    initState(detail)
+    Object.assign(detail, JSON.parse(data))
+    initState()
   }
 })
-const initState = (detail: any) => {
-  console.log('detail', detail)
+
+const initState = () => {
   const { wenan, chuchu, shangxi, tuijian } = detail
   const list = [wenan, chuchu, shangxi, tuijian]
-  state.chatList = list.map(item => {
+  state.chatList = list.filter(item => item).map(item => {
     return {
       role: 'assistant',
       content: item,
@@ -102,84 +91,52 @@ if (logined) {
   uni.$on('afterLogin', afterLogin)
 }
 
-// 处理步骤相关
-const process = new Process(state)
-const currentTextIndex = ref(0)
-const changeCrrentTextIndex = (lift: number) => {
-  currentTextIndex.value = currentTextIndex.value + lift
-}
-
+const instance = getCurrentInstance();
 // 滚动相关
-watch(() => [state.chatList, currentTextIndex.value], () => {
-  scrollTobBottom()
+watch(() => state.chatList, () => {
+  scrollTobBottom(instance)
 }, {
   deep: true
 })
 
-const answer = (item: any, option: string) => {
-  const data = {
-    groupId: item.groupId,
-    value: option,
-  }
-  process.commitdata.push(data)
-  addUserMessage(option)
-  process.next()
-}
-const addUserMessage = (msg: string) => {
-  state.chatList.push({
-    role: 'user',
-    content: msg
+const createNickName = () => {
+  const item = reactive({
+    role: 'assistant',
+    content: '',
+    loading: true,
+    error: false,
+    last: true
   })
-}
-const likeText = (text: string = '') => {
-  const data = {
+  state.chatList.push(item)
+  const { wenan } = detail
+  const data = [{
     groupId: 3,
-    value: text
-  }
-  process.commitdata.push(data)
-  addUserMessage(text)
-  process.next()
-}
-const submitAgain = () => {
-  process.submit()
-}
-const getNameList = (content: string) => {
-  // 匹配 `*** ***` 包裹的内容的正则表达式
-  let regex = /\*\*(.*?)\*\*/g;
-
-  // 使用正则表达式进行匹配
-  let matches = [];
-  let match;
-  while ((match = regex.exec(content)) !== null) {
-    matches.push(match[1]);
-  }
-  return matches
-}
-const bindPickerChange = (data: any, content: string) => {
-  const nameList = getNameList(content)
-  const index = data.detail.value * 1
-  const name = nameList[index]
-  uni.setClipboardData({
-    data: name,
-    success() {
-      console.log('name', name)
-    }
-  })
-}
-const inputDialog = ref()
-const text = ref('')
-const inputText = () => {
-  inputDialog.value.open()
-}
-const confirm = (data: any) => {
-  if (!text.value) {
-    return
-  }
-  likeText(text.value)
-  close()
-}
-const close = () => {
-  inputDialog.value.close()
+    value: wenan
+  }]
+  chat({
+    data,
+    message: ''
+  },
+    {
+      onMessage: (data: any) => {
+        const { choices = [] } = data
+        const { delta = {} } = choices[0]
+        const { content = '' } = delta
+        if (!content)
+          return
+        item.content += content
+      },
+      success: () => { },
+      fail: () => {
+        item.loading = false
+        item.error = true
+      },
+      complete: () => {
+        item.loading = false
+        item.error = false
+        state.tokenNum--
+      }
+    })
 }
 </script>
 

@@ -42,24 +42,17 @@ export const useChat = () => {
   const canSendMessage = computed(() => {
     return state.message && !isLoading.value
   })
-  const scrollTobBottom = () => {
-    setTimeout(() => {
-      nextTick(() => {
-        const query = uni.createSelectorQuery()
-        const node = query.select('.scroll-y-container')
-        if (node) {
-          node.node((node) => {
-            console.log('node', node)
-          }).exec()
-          node.boundingClientRect((data: any) => {
-            // console.log('data', data)
-            // console.log('state.scrollTop', state.scrollTop)
-            // const height = data.height
-            // state.scrollTop = height + 24
-          }).exec();
-        }
-      })
-    }, 10);
+  const scrollTobBottom = (instance: any) => {
+    nextTick(() => {
+      const query = uni.createSelectorQuery().in(instance)
+      const node = query.select('.scroll-y-container')
+      if (node) {
+        node.boundingClientRect((data: any) => {
+          const height = data ? data.height : 0
+          state.scrollTop = height + 24
+        }).exec();
+      }
+    })
   }
   const updateRequestNum = async () => {
     const { tokenNum = 0 } = await request({
