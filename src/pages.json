@@ -8,12 +8,6 @@
 			}
 		},
 		{
-			"path": "pages/index/chat",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			"path": "pages/index/shangxi-chat",
 			"style": {
 				"disableScroll": false,

@@ -17,7 +17,7 @@
           <section class="row-main">
             <mp-html class="text-content" :content="getMarkdownText(item.content)"></mp-html>
             <template v-if="item.list && item.list.length">
-              <view class="list-item" v-for="name in item.list" :key="item">
+              <view class="list-item" v-for="name in item.list.slice(0,5)" :key="item">
                 <text>{{ name }}</text>
                 <img :src="Copy" @click="copyName(name)" />
               </view>
