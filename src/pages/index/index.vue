@@ -4,6 +4,7 @@
       <text v-for="item in tabs" :key="item.value" @click="tabChange(item.value)" :class="{ active: item.value === tab }">{{ item.label }}</text>
     </section>
     <uni-transition mode-class="slide-right" ref="animationRef" :styles="styles" :duration="0" :show="true">
+      <Home class="tab-container"></Home>
       <ShangXi class="tab-container"></ShangXi>
       <Chat class="tab-container"></Chat>
     </uni-transition>
@@ -13,16 +14,20 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import Chat from '@/components/chat/chat.vue'
+import Home from '@/components/home/index.vue'
 import ShangXi from '@/components/shangxi/shangxi.vue'
 const tabs = [{
-  label: '赏析',
+  label: '社区',
   value: 1
 }, {
-  label: '对话',
+  label: '赏析',
   value: 2
+}, {
+  label: '对话',
+  value: 3
 }]
 const styles = {
-  'width': '200vw',
+  'width': '300vw',
   'height': '100%',
   "overflow": "hidden"
 }
@@ -32,7 +37,7 @@ let translateX = 0
 const tabChange = (value: number) => {
   const oldTab = tab.value
   tab.value = value
-  translateX += (oldTab - value) * 50
+  translateX += (oldTab - value) * (100 / tabs.length)
   translate()
 }
 const translate = () => {
@@ -83,7 +88,7 @@ const touchEnd = (e: any) => {
     if (deltaX > 0 && value > 1) {
       tabChange(value - 1)
     }
-    if (deltaX < 0 && value < 2) {
+    if (deltaX < 0 && value < 3) {
       tabChange(value + 1)
     }
   }

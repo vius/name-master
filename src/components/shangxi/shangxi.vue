@@ -53,7 +53,7 @@ const getList = async (label: string = '') => {
 const jump2detail = (item: any) => {
   console.log('jump2detail')
   const data = JSON.stringify(item)
-  const url = `/pages/index/shangxi-chat?data=${data}`
+  const url = `/pages/shangxi/index?data=${data}`
   uni.navigateTo({
     url
   })

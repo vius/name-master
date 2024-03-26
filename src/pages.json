@@ -8,10 +8,17 @@
 			}
 		},
 		{
-			"path": "pages/index/shangxi-chat",
+			"path": "pages/shangxi/index",
 			"style": {
 				"disableScroll": false,
 				"navigationBarTitleText": "赏析详情"
+			}
+		},
+		{
+			"path": "pages/person/index",
+			"style": {
+				"disableScroll": false,
+				"navigationBarTitleText": "人物"
 			}
 		}
 	],
